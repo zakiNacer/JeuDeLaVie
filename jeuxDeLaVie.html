@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h1 class="center">Jeu de la vie</h5>
+    <div class="center">
+        <button id="start">start</button>
+        <button id="stop">stop</button>
+        <button id="reset">reset</button>
+        <button id="clear">clear</button>
+    </div>
+    
+    
+    
+    <style>
+        body{
+            margin :0;
+
+        }
+        .center{
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        table{
+            margin-left: auto;
+            margin-right: auto;
+            border-collapse: collapse;
+        }
+        td{
+          /* border: solid 1px black; */
+          width:10px;
+          height:10px;  
+        }
+        .center{
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+            color: black;
+        }
+
+        .morte{
+            background-color: white;
+        }
+        .vivante{
+            background-color: black;
+        }
+        /* personalisation des bouttons */
+        #start{
+            color:white;
+            background-color: black;
+            border-radius: 5px;
+            font-size: 16px;
+            
+        }
+        #stop{
+            color:white;
+            background-color: black;
+            border-radius: 5px;
+            font-size: 16px;
+            
+        }
+        #reset{
+            color:white;
+            background-color: black;
+            border-radius: 5px;
+            font-size: 16px;
+            
+        }
+        #clear{
+            color:white;
+            background-color: black;
+            border-radius: 5px;
+            font-size: 16px;
+            
+        }
+    
+    </style>
+    
+    <script>
+        window.addEventListener("DOMContentLoaded",run,false);
+        function run(){
+            const DIM = 50;
+            function initTabHtml(){
+                let table = document.createElement("table");
+                document.body.appendChild(table);
+                for(let i=0 ; i<DIM; i++){
+                    let tr = document.createElement("tr");
+                    table.appendChild(tr);
+                    for(let y=0; y<DIM ; y++){
+                        let td = document.createElement("td");
+                        tr.appendChild(td);
+                    }
+                }
+            }
+            function initMonde(){
+                monde = [];
+                for(let i=0 ; i<DIM ; i++){
+                    monde[i]=[];
+                    for(let j=0 ; j<DIM ; j++){
+                        monde[i][j]=false;
+                    }
+                }
+            }
+            function initEtatCellule(){
+                
+                for(let i=1 ; i<DIM-1 ; i++){
+                    monde[i]=[];
+                    for(let j=0 ; j<DIM ; j++){
+                        monde[i][j]=Math.random()<0.5;
+                    }
+                }
+            }
+
+            function afficheMonde(){
+                let cellule=document.querySelectorAll("td");
+                for(let i=0 ; i<DIM ; i++){
+                    for(let j=0 ; j<DIM ; j++){
+                        if(monde[i][j]){
+                            cellule[i*DIM+j].setAttribute("class","vivante");
+                        }else{
+                            cellule[i*DIM+j].setAttribute("class","morte");   
+                        }
+                    }
+                }
+            }
+            function cycle(){
+                let monde2 = [];
+                for(let i=1;i<DIM-1;i++){
+                    monde2[i] = []
+                    for(let j=1;j<DIM-1;j++){
+                        let voisines = 0;
+                        if(monde[i-1][j-1])
+                            voisines++;
+                        if(monde[i-1][j])
+                            voisines++;
+                        if(monde[i-1][j+1])
+                            voisines++;
+                        if(monde[i][j+1])
+                            voisines++;
+                        if(monde[i+1][j+1])
+                            voisines++;
+                        if(monde[i+1][j])
+                            voisines++;
+                        if(monde[i+1][j-1])
+                            voisines++;
+                        if(monde[i][j-1])
+                            voisines++;
+                        if(monde[i][j]==false){
+                            if(voisines==3){
+                                monde2[i][j] = true;
+                            }else{monde2[i][j] = false;}
+                                
+                                
+                        }
+                        else {
+                            if((voisines==2)||(voisines==3))
+                                monde2[i][j] = true;
+                            else
+                                monde2[i][j] = false;
+                        }
+                    }
+                }
+        
+                for(let i=1; i<DIM-1; i++){
+                    for(let j=1; j<DIM-1; j++){
+                    monde[i][j] = monde2[i][j]
+                }
+            }
+            }
+            
+
+            function time(){
+                cycle();
+                afficheMonde()
+            }
+            
+            let start=document.querySelector('#start');
+            start.addEventListener("click",sstart,false);
+            let stop=document.querySelector('#stop');
+            stop.addEventListener("click",sstop,false);
+            let reset=document.getElementById('reset');
+            reset.addEventListener("click",rreset,false);
+            let clear=document.getElementById('clear');
+            clear.addEventListener("click",cclear,false);
+
+            function sstart(){
+                timer = setInterval(time,100);
+            }
+
+            
+            function sstop(){
+                clearInterval(timer);
+            }
+
+           
+            function rreset(){
+                initEtatCellule();
+                afficheMonde();
+            }
+
+           
+            function cclear(){
+                for(let i =0; i<DIM ; i++){
+                    monde[i]=[];
+                    for(let j=0; j<DIM ; j++){
+                        monde[i][j]=false;
+                    }
+                }
+                afficheMonde();
+            }
+            
+            function changeEtat(){
+                let cellule=document.querySelector('#td');
+                for(let i=0 ; i<DIM ; i++){
+                    for(let j=0 ; j<DIM; j++){
+                        if(cellules[i*DIM+j]===this){
+                            console.log("(${i},${j})");
+                            monde[i][j]==!monde[i][j];
+                            afficheMonde();
+                        }
+                    }
+                }
+            }
+            initTabHtml();
+            initMonde();
+            initEtatCellule();
+            afficheMonde();
+            cycle();
+            
+
+        }
+        
+        
+    </script>
+
+  
+</body>
+</html>
